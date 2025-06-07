@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculator</title>
+  <style>
+    :root {
+      --bg: #1f1f1f;
+      --text: #fefefd;
+      --btn-bg: #2c2c2c;
+      --btn-glow: #fa43c6;
+      --btn-hover: #333;
+      --accent: #ff3700;
+      --clear: #ff4d4d;
+    }
+
+    body.light-mode {
+      --bg: #f0f0f0;
+      --text: #000000;
+      --btn-bg: #ffffff;
+      --btn-glow: #00aaff;
+      --btn-hover: #e0e0e0;
+      --accent: #006eff;
+      --clear: #ff3b3b;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      transition: 0.4s ease-in-out;
+    }
+
+    .calculator {
+      background: linear-gradient(145deg, var(--btn-bg), var(--bg));
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px var(--btn-glow);
+      transition: 0.3s;
+    }
+
+    .display {
+      width: 91%;
+      height: 60px;
+      font-size: 28px;
+      padding: 10px;
+      margin-bottom: 20px;
+      text-align: right;
+      background: #d2e1e8b4;
+      color: rgb(237, 56, 56);
+      border: none;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px #583cf8;
+    }
+
+    .buttons, .scientific-buttons {
+
+      display: grid;
+      grid-template-columns: repeat(4, 70px);
+      gap: 12px;
+    }
+
+    .scientific-buttons {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .btn {
+      height: 60px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: var(--btn-bg);
+      color: var(--text);
+      box-shadow: 0 0 10px var(--btn-glow);
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: var(--btn-hover);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--btn-glow), 0 0 5px var(--btn-glow);
+    }
+
+    .equal {
+      grid-column: span 2;
+      background: var(--accent);
+      color: black;
+      font-weight: bold;
+    }
+
+    .equal:hover {
+      box-shadow: 0 0 15px var(--accent), 0 0 5px var(--accent);
+    }
+
+    .clear {
+      background: var(--clear);
+      font-weight: bold;
+    }
+
+    .clear:hover {
+      box-shadow: 0 0 15px var(--clear), 0 0 5px var(--clear);
+    }
+
+    .toggle-buttons {
+      margin-bottom: 50px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .toggle-buttons button {
+      padding: 8px 14px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--btn-bg);
+      color: var(--text);
+      box-shadow: 0 0 8px var(--btn-glow);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-buttons button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px var(--btn-glow);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="toggle-buttons">
+    <button onclick="toggleTheme()">🎨SWITCH MODES ☀︎</button>
+    <button onclick="toggleScientific()">🧪 SCIENTIFIC CALCULATIONS</button>
+  </div>
+
+  <div class="calculator">
+    <input type="text" class="display" id="display" disabled />
+
+    <div class="buttons">
+      <button class="btn" onclick="append('7')">7</button>
+      <button class="btn" onclick="append('8')">8</button>
+      <button class="btn" onclick="append('9')">9</button>
+      <button class="btn" onclick="append('/')">/</button>
+
+      <button class="btn" onclick="append('4')">4</button>
+      <button class="btn" onclick="append('5')">5</button>
+      <button class="btn" onclick="append('6')">6</button>
+      <button class="btn" onclick="append('*')">*</button>
+
+      <button class="btn" onclick="append('1')">1</button>
+      <button class="btn" onclick="append('2')">2</button>
+      <button class="btn" onclick="append('3')">3</button>
+      <button class="btn" onclick="append('-')">-</button>
+
+      <button class="btn" onclick="append('0')">0</button>
+      <button class="btn" onclick="append('.')">.</button>
+      <button class="btn equal" onclick="calculate()">=</button>
+      <button class="btn" onclick="append('+')">+</button>
+
+      <button class="btn clear" onclick="clearDisplay()">C</button>
+    </div>
+
+    <div class="scientific-buttons" id="scientificPanel">
+      <button class="btn" onclick="applyFunction('sin')">sin</button>
+      <button class="btn" onclick="applyFunction('cos')">cos</button>
+      <button class="btn" onclick="applyFunction('tan')">tan</button>
+      <button class="btn" onclick="applyFunction('log')">log</button>
+
+      <button class="btn" onclick="append('**')">^</button>
+      <button class="btn" onclick="applyFunction('sqrt')">√</button>
+      <button class="btn" onclick="append('(')">(</button>
+      <button class="btn" onclick="append(')')">)</button>
+    </div>
+  </div>
+<audio id="clickSound" src="click-tap-computer-mouse-352734.mp3"></audio>
+ 
+  <script>
+    
+    const display = document.getElementById('display');
+    const scientificPanel = document.getElementById('scientificPanel');
+    
+    function playSound() 
+    {
+      document.getElementById('clickSound').play();
+    }
+
+
+    function append(value) {
+      playSound();
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function calculate() {
+      try {
+        display.value = eval(display.value);
+      } catch {
+        display.value = "Error";
+      }
+    }
+
+    function applyFunction(func) {
+      let value = parseFloat(display.value);
+      if (isNaN(value)) return;
+      switch (func) {
+        case 'sin': display.value = Math.sin(toRadians(value)).toFixed(5); break;
+        case 'cos': display.value = Math.cos(toRadians(value)).toFixed(5); break;
+        case 'tan': display.value = Math.tan(toRadians(value)).toFixed(5); break;
+        case 'log': display.value = Math.log10(value).toFixed(5); break;
+        case 'sqrt': display.value = Math.sqrt(value).toFixed(5); break;
+      }
+    }
+
+    function toRadians(deg) {
+      return deg * (Math.PI / 180);
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+    }
+
+    function toggleScientific() {
+      scientificPanel.style.display = scientificPanel.style.display === 'grid' ? 'none' : 'grid';
+    }
+    
+  </script>
+  
+  
+
+</body>
+</html>
